@@ -120,4 +120,32 @@ docker build --rm -t node-app .
 docker run --name node-app -p 3000:3000 node-app
 ```
 
+## Push image to GCR (Google Container Registry)
 
+> [Pushing image to GCR][link:gcr-usage]
+
+Make sure the image is successfully built.
+```sh
+docker images
+```
+
+Tag the image.
+```sh
+# docker tag [SOURCE_IMAGE] [HOST_NAME]/[GCP_PROJECT_ID]/[IMAGE]:[TAG]
+docker tag node-app gcr.io/<project-name>/node-app
+```
+
+Push the images to GCR
+```sh
+docker push gcr.io/<project-name>/node-app
+```
+
+Check the image is push.
+```sh
+gcloud container images list-tags gcr.io/<project-name>/node-app
+
+# DIGEST        TAGS    TIMESTAMP
+# 19c81f3c8114  latest  2018-10-01T14:12:44
+```
+
+[link:gcr-usage]:https://cloud.google.com/container-registry/docs/pushing-and-pulling?hl=en_US&_ga=2.46868133.-386356805.1537960264
