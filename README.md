@@ -149,3 +149,87 @@ gcloud container images list-tags gcr.io/<project-name>/node-app
 ```
 
 [link:gcr-usage]:https://cloud.google.com/container-registry/docs/pushing-and-pulling?hl=en_US&_ga=2.46868133.-386356805.1537960264
+
+
+## Config Kubernetes
+At this time, our cluster should be built. (You can check it on [GCP K8s Engine][link:gcp-k8s-eng])
+Create a file in `node-app/` named `deployment.yaml`
+
+```sh
+# in node-app/
+touch deployment.yaml
+```
+This is the configuration file of k8s deployment. It basically tells K8s how to deploy this app.
+
+```yaml
+apiVersion: apps/v1 # k8s version
+kind: Deployment    # configuration type
+metadata:
+  name: nodeapp     # name of our app
+spec:
+  replicas: 3       # how many container should be running at the same time. In GCP, the minimun is 3.
+  selector:
+    matchLabels:
+      app: nodeapp  # Set the target app to run. (Find with a label named "app" with the value "nodeapp")
+  template:
+    metadata:
+      labels:
+        app: nodeapp # Template for expension
+    spec:
+      containers:
+      - name: nodeapp
+        image: gcr.io/node-deploy-test-214507/node-app:latest
+        ports:
+        - containerPort: 3000
+```
+
+Then, create another file named `service.yaml` which tells k8s how the app/service act.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeapp
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  selector:
+    app: nodeapp
+  type: LoadBalancerapiVersion: v1
+kind: Service
+metadata:
+  name: nodeapp
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  selector:
+    app: nodeapp
+  type: LoadBalancer
+```
+
+# Deploy the service
+
+Make sure the clusters are running.
+
+```sh
+kubectl svc
+```
+
+Create the service.
+```sh
+kubectl create -f service.yaml
+```
+
+Deploy the images
+```sh
+kubectl create -f deployment.yaml
+```
+
+
+
+
+[link:gcp-k8s-eng]:https://console.cloud.google.com/kubernetes/

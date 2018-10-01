@@ -1,0 +1,19 @@
+apiVersion: apps/v1 # k8s version
+kind: Deployment    # configuration type
+metadata:
+  name: nodeapp     # name of our app
+spec:
+  replicas: 3       # how many container should be running at the same time. In GCP, the minimun is 3.
+  selector:
+    matchLabels:
+      app: nodeapp  # Set the target app to run. (Find with a label named "app" with the value "nodeapp")
+  template:
+    metadata:
+      labels:
+        app: nodeapp # Template for expension
+    spec:
+      containers:
+      - name: nodeapp
+        image: gcr.io/node-deploy-test-214507/node-app:latest
+        ports:
+        - containerPort: 3000
