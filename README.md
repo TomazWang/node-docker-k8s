@@ -76,5 +76,48 @@ npm start
 ```
 
 
-## 
+## Start A Cluster
+
+__This step will cost you money!!__
+
+```sh
+gcloud container clusters create <cluster-name>
+```
+> this command might need a while.
+
+You can check it out with GUI at : https://console.cloud.google.com/kubernetes
+
+
+## Dockerize our app
+
+Create Dockerfile
+```sh
+# in app dir
+touch Dockerfile
+```
+
+```dockerfile
+FROM node:10-alpine
+
+WORKDIR /app
+
+COPY package.json /app
+RUN npm install
+
+COPY . /app
+
+EXPOSE 3000
+
+CMD npm start
+```
+
+Build it and run the docker image.
+```sh
+# in node-app/
+docker build --rm -t node-app .
+
+# run the docker container
+docker run --name node-app -p 3000:3000 node-app
+```
+
 
